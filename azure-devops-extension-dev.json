@@ -1,4 +1,5 @@
 {    
+    "id": "build-hub-dev",
     "name": "Build and Pipelines Hub Dev",
     "baseUri": "https://build-hub.thecliffface.com"
 }

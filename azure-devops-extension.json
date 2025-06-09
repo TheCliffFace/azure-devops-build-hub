@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "build-hub",
     "publisher": "TheCliffFace",
-    "version": "1.0.20",
+    "version": "1.0.26",
     "name": "Build and Pipelines Hub",
     "description": "Azure DevOps Extension",
     "categories": [
