@@ -17,7 +17,7 @@ function getUrl(stub: string) : string {
     return url.toString();
 }
 
-async function postApiResponse<T>(stub: string, body: any): Promise<T>{
+async function fetchApiResponse<T>(method: "GET" | "POST", stub: string, body: any | undefined = undefined): Promise<T>{
     
     await SDK.ready();
     const accessToken = await SDK.getAccessToken();
@@ -30,7 +30,7 @@ async function postApiResponse<T>(stub: string, body: any): Promise<T>{
     const response = await fetch(
         getUrl(stub), 
         {
-            method: "POST",
+            method: method,
             headers: {
                 Authorization: `Basic ${encodedCredentials}`,
                 "Content-Type": "application/json",
@@ -51,6 +51,18 @@ async function postApiResponse<T>(stub: string, body: any): Promise<T>{
     return data; 
 }
 
+export async function getPipelineRuns(
+    project: string, 
+): Promise<IListResponse<Run>> {
+    const response = await fetchApiResponse<IListResponse<Run>>(
+        "GET",
+        `${project}/_apis/pipelines/runs`
+    );
+
+    // Return the list of pipelines
+    return response; 
+}
+
 export async function startPipeline(
         project: string, 
         pipelineId: number,
@@ -67,37 +79,16 @@ export async function startPipeline(
             builds: {},
             containers: {},
             pipelines: {}
-        },
-        //id: 12345,        
+        },      
         createdDate: new Date(),              
     };
 
-    //run.resources.repositories["refName"] = branch;
-
-    const response = await postApiResponse<Run>(
+    const response = await fetchApiResponse<Run>(
+        "POST",
         `${project}/_apis/pipelines/${pipelineId}/runs`,
         run
     );    
-    
-    
-    /*
-    $postBody = {         
-        "resources": {
-            "repositories": {
-                "self": {
-                    "refName": "refs/heads/master"
-                }
-            }
-        },
-        "templateParameters": {
-            "testParam": "new value for parameter"
-        },
-        "variables": {
-            "testVar": { 
-                "value": "new value for variable"
-            }
-        }
-    }*/
+        
     // Return the list of pipelines
     return response; 
 }

@@ -1,6 +1,3 @@
-#$env:AZURE_DEVOPS_USER = ''
-#$env:AZURE_DEVOPS_PASSWORD = ''
-#
 
 function get-azuredevops {
     param(
@@ -109,7 +106,6 @@ function get-buildTimeline {
     # https://dev.azure.com/{organization}/{project}/_apis/build/builds/{buildId}/timeline/{timelineId}?api-version=7.2-preview.3
     return get-azuredevops "$projectId/_apis/build/builds/$runId/timeline/$timelineId"
 }
-
 function get-buildLogs {
     param(
         $projectId,

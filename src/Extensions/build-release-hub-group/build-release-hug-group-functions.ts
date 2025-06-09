@@ -61,7 +61,6 @@ export async function queueBuildForBranch(
 ): Promise<Run> {
   var response = await startPipeline(projectId, buildDefinition.id, branchName)
 
-  response.resources.repositories.self
   return response;
 }
 
@@ -120,7 +119,7 @@ export async function cancelBuild(
 export async function getBuildsInProgress(
   projectId: string,
   top: number = 100, 
-  status: BuildStatus = BuildStatus.InProgress
+  status: BuildStatus | undefined = BuildStatus.InProgress
   ): Promise<Build[]> {  
   const client = getClient(BuildRestClient);
   
