@@ -11,3 +11,5 @@ coverage
 *.lcov
 
 extension/json
+/src/__mocks__
+/src/Json
