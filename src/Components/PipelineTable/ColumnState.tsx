@@ -5,7 +5,7 @@ import { PipelineTableType } from "./PipelineTableType";
 import { RadioButton, RadioButtonGroup, RadioButtonGroupDirection } from 'azure-devops-ui/RadioButton';
 import { DefinitionQueueStatus } from 'azure-devops-extension-api/Build';
 import { ObservableValue } from 'azure-devops-ui/Core/Observable';
-import { updateBuildDefinitionStatus } from '../../Samples/build-release-hub-group/build-release-hug-group-functions';
+import { updateBuildDefinitionStatus } from '../../Extensions/build-release-hub-group/build-release-hug-group-functions';
 
 export const columnState =
 {

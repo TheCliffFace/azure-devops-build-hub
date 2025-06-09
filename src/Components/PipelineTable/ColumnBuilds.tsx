@@ -4,7 +4,7 @@ import React from 'react';
 import { PipelineTableType } from "./PipelineTableType";
 import { Tooltip } from 'azure-devops-ui/TooltipEx';
 import { Button } from 'azure-devops-ui/Button';
-import { queueBuildForBranch } from '../../Samples/build-release-hub-group/build-release-hug-group-functions';
+import { queueBuildForBranch } from '../../Extensions/build-release-hub-group/build-release-hug-group-functions';
 
 export const columnBuilds =
 {

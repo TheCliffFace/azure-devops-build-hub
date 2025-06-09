@@ -1,11 +1,7 @@
-import * as SDK from 'azure-devops-extension-sdk';
-import { ITableColumn, SimpleTableCell, TableCell } from "azure-devops-ui/Table";
+import { ITableColumn, SimpleTableCell } from "azure-devops-ui/Table";
 import React from "react";
 import { IPipelineItem } from "../IPipelineItem";
-import { Button } from "azure-devops-ui/Button";
-import { cancelBuild, getProjects } from "../../../Samples/build-release-hub-group/build-release-hug-group-functions";
-import { BuildStatus } from "azure-devops-extension-api/Build";
-import { getBuildStatus, getTimelineStatus } from '../BuildTableFunctions';
+import { getTimelineStatus } from '../BuildTableFunctions';
 import { Status, StatusSize } from 'azure-devops-ui/Status';
 import { Tooltip } from 'azure-devops-ui/TooltipEx';
 

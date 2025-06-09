@@ -12,9 +12,9 @@ The sample repository depends on a few Azure DevOps packages:
 
 Some external dependencies:
 
-- `React` - Is used to render the UI in the samples, and is a dependency of `azure-devops-ui`.
-- `TypeScript` - Samples are written in TypeScript and compiled to JavaScript
-- `SASS` - Extension samples are styled using SASS (which is compiled to CSS and delivered in webpack js bundles).
+- `React` - Is used to render the UI in the Extensions, and is a dependency of `azure-devops-ui`.
+- `TypeScript` - Extensions are written in TypeScript and compiled to JavaScript
+- `SASS` - Extension Extensions are styled using SASS (which is compiled to CSS and delivered in webpack js bundles).
 - `webpack` - Is used to gather dependencies into a single javascript bundle for each sample.
 
 ## Building the sample project
@@ -34,83 +34,83 @@ The preferred way to get started is to use the `tfx extension init` command whic
 
 You can also clone the sample project and change the `publisher` property in `azure-devops-extension.json` to your own Marketplace publisher id. Refer to the online [documentation](https://docs.microsoft.com/en-us/azure/devops/extend/publish/overview?view=vsts) for setting up your own publisher and publishing an extension.
 
-# Samples
+# Extensions
 
-Individual sample contributions are self-contained folders under `./src/Samples`. These samples will match those contribution points [as documented](https://learn.microsoft.com/en-us/azure/devops/extend/reference/targets/overview?view=azure-devops). Within each sample you will find:
+Individual sample contributions are self-contained folders under `./src/Extensions`. These Extensions will match those contribution points [as documented](https://learn.microsoft.com/en-us/azure/devops/extend/reference/targets/overview?view=azure-devops). Within each sample you will find:
 
 1. `{SampleName}.json` - describes the contribution objects being added to Azure DevOps
 2. `{SampleName}.html` - page which is rendered within an iframe on the appropriate Azure DevOps page or pages. It may be visible UI (such as a Hub) or a background iframe (such as a Menu action handler). This will include a sample reference for `{SampleName}.js`, and for visible frames it will contain a single `<div>` element with an id of `root`.
 3. `{SampleName}.ts(x)` - Root script that is run when the frame is loaded. A webpack entry is added for this file which will generate a single `js` file with this content and all its dependencies.
 4. `{SampleName}.scss` - optional sass file containing the styles (CSS) for the UI
-5. Additional ts/tsx files - For samples that are too big for one file, the code will be broken up appropriately
+5. Additional ts/tsx files - For Extensions that are too big for one file, the code will be broken up appropriately
 
 ## Hubs and hub groups
 
 Hubs and hub groups are the primary navigation elements in Azure DevOps. Files, Releases, Backlogs, and Queries are examples of hubs. A hub belongs to a hub group. The Files hub, for example, belongs to the project-level Azure Repos hub group. Hub groups can exist at the organization or collection level or the project level. Most extensions contribute to the project level.
 
-Here are samples for the [most common hub contributions](https://learn.microsoft.com/en-us/azure/devops/extend/reference/targets/overview?toc=%2Fazure%2Fdevops%2Fmarketplace-extensibility%2Ftoc.json&view=azure-devops#hubs-and-hub-groups):
+Here are Extensions for the [most common hub contributions](https://learn.microsoft.com/en-us/azure/devops/extend/reference/targets/overview?toc=%2Fazure%2Fdevops%2Fmarketplace-extensibility%2Ftoc.json&view=azure-devops#hubs-and-hub-groups):
 
-- Azure Boards - [work-hub-group](src/Samples/work-hub-group)
-- Azure Repos - [code-hub-group](src/Samples/code-hub-group)
-- Azure Pipelines - [build-release-hub-group](src/Samples/build-release-hub-group)
-- Azure Test Plans - [test-hub-group](src/Samples/test-hub-group)
-- Project Settings - [project-admin-hub-group](src/Samples/project-admin-hub-group)
-- Organization Settings - [collection-admin-hub-group](src/Samples/collection-admin-hub-group)
+- Azure Boards - [work-hub-group](src/Extensions/work-hub-group)
+- Azure Repos - [code-hub-group](src/Extensions/code-hub-group)
+- Azure Pipelines - [build-release-hub-group](src/Extensions/build-release-hub-group)
+- Azure Test Plans - [test-hub-group](src/Extensions/test-hub-group)
+- Project Settings - [project-admin-hub-group](src/Extensions/project-admin-hub-group)
+- Organization Settings - [collection-admin-hub-group](src/Extensions/collection-admin-hub-group)
 
 ## Azure Boards menu and toolbar
 
-- Work item query menu - [work-item-query-menu](src/Samples/work-item-query-menu)
-- Work item query results toolbar menu - [work-item-query-results-toolbar-menu](src/Samples/work-item-query-results-toolbar-menu)
-- Work item query results menu item - [query-result-work-item-menu](src/Samples/query-result-work-item-menu)
-- Work item query results tab - [query-tabs](src/Samples/query-tabs)
-- Work item for context menu - [work-item-toolbar-menu](src/Samples/work-item-toolbar-menu)
-- Backlog item menu - [backlog-item-menu](src/Samples/backlog-item-menu)
-- Sprint board pivot filter menu - [sprint-board-pivot-filter-menu](src/Samples/sprint-board-pivot-filter-menu)
-- Board pivot filter menu - [backlog-board-pivot-filter-menu](src/Samples/backlog-board-pivot-filter-menu)
-- Card menu - [backlog-board-card-item-menu](src/Samples/backlog-board-card-item-menu)
-- Product backlog tab - [product-backlog-tabs](src/Samples/product-backlog-tabs)
-- Iteration backlog tab - [iteration-backlog-tabs](src/Samples/iteration-backlog-tabs)
-- Portfolio backlog pane - [portfolio-backlog-toolpane](src/Samples/backlog-toolpane)
-- Product backlog pane - [requirement-backlog-toolpane](src/Samples/backlog-toolpane)
-- Iteration backlog pane - [iteration-backlog-toolpane](src/Samples/backlog-toolpane)
+- Work item query menu - [work-item-query-menu](src/Extensions/work-item-query-menu)
+- Work item query results toolbar menu - [work-item-query-results-toolbar-menu](src/Extensions/work-item-query-results-toolbar-menu)
+- Work item query results menu item - [query-result-work-item-menu](src/Extensions/query-result-work-item-menu)
+- Work item query results tab - [query-tabs](src/Extensions/query-tabs)
+- Work item for context menu - [work-item-toolbar-menu](src/Extensions/work-item-toolbar-menu)
+- Backlog item menu - [backlog-item-menu](src/Extensions/backlog-item-menu)
+- Sprint board pivot filter menu - [sprint-board-pivot-filter-menu](src/Extensions/sprint-board-pivot-filter-menu)
+- Board pivot filter menu - [backlog-board-pivot-filter-menu](src/Extensions/backlog-board-pivot-filter-menu)
+- Card menu - [backlog-board-card-item-menu](src/Extensions/backlog-board-card-item-menu)
+- Product backlog tab - [product-backlog-tabs](src/Extensions/product-backlog-tabs)
+- Iteration backlog tab - [iteration-backlog-tabs](src/Extensions/iteration-backlog-tabs)
+- Portfolio backlog pane - [portfolio-backlog-toolpane](src/Extensions/backlog-toolpane)
+- Product backlog pane - [requirement-backlog-toolpane](src/Extensions/backlog-toolpane)
+- Iteration backlog pane - [iteration-backlog-toolpane](src/Extensions/backlog-toolpane)
 
 ## Azure Pipelines menu and toolbar
 
-- Completed build menu - [completed-build-menu](src/Samples/completed-build-menu)
-- Build definitions menu - [build-definitions-menu](src/Samples/build-definitions-menu)
-- Test results toolbar action - [test-results-actions-menu](src/Samples/test-results-actions-menu)
-- Test result details tab - [test-result-details-tab-items](src/Samples/test-result-details-tab-items)
-- Release pipeline explorer context menu - [release-definition-explorer-context-menu](src/Samples/release-definition-explorer-context-menu)
-- Pipeline details view, header button - [pipelines-header-menu](src/Samples/pipelines-header-menu)
-- Pipeline details view, folder context menu - [pipelines-folder-menu](src/Samples/pipelines-folder-menu)
+- Completed build menu - [completed-build-menu](src/Extensions/completed-build-menu)
+- Build definitions menu - [build-definitions-menu](src/Extensions/build-definitions-menu)
+- Test results toolbar action - [test-results-actions-menu](src/Extensions/test-results-actions-menu)
+- Test result details tab - [test-result-details-tab-items](src/Extensions/test-result-details-tab-items)
+- Release pipeline explorer context menu - [release-definition-explorer-context-menu](src/Extensions/release-definition-explorer-context-menu)
+- Pipeline details view, header button - [pipelines-header-menu](src/Extensions/pipelines-header-menu)
+- Pipeline details view, folder context menu - [pipelines-folder-menu](src/Extensions/pipelines-folder-menu)
 
 ## Azure Repos menu and toolbar
 
-- Source item (grid) menu - [source-grid-item-menu](src/Samples/source-grid-item-menu)
-- Source item (tree) menu - [source-tree-item-menu](src/Samples/source-tree-item-menu)
-- Source item (grid and tree) menu - [source-item-menu](src/Samples/source-item-menu)
-- Git branches tree menu - [git-branches-tree-menu](src/Samples/git-branches-tree-menu)
-- Git pull request actions menu - [pull-request-action-menu](src/Samples/pull-request-action-menu)
-- Git pull request details tabs - [pr-tabs](src/Samples/pr-tabs)
-- Git commit listing menu - [git-commit-list-menu](src/Samples/git-commit-list-menu)
-- Git commit detail menu - [git-commit-details-menu](src/Samples/git-commit-details-menu)
+- Source item (grid) menu - [source-grid-item-menu](src/Extensions/source-grid-item-menu)
+- Source item (tree) menu - [source-tree-item-menu](src/Extensions/source-tree-item-menu)
+- Source item (grid and tree) menu - [source-item-menu](src/Extensions/source-item-menu)
+- Git branches tree menu - [git-branches-tree-menu](src/Extensions/git-branches-tree-menu)
+- Git pull request actions menu - [pull-request-action-menu](src/Extensions/pull-request-action-menu)
+- Git pull request details tabs - [pr-tabs](src/Extensions/pr-tabs)
+- Git commit listing menu - [git-commit-list-menu](src/Extensions/git-commit-list-menu)
+- Git commit detail menu - [git-commit-details-menu](src/Extensions/git-commit-details-menu)
 
 ## Azure Test Plans menu and toolbar
 
-- Test run grid menu - [test-run-grid-menu](src/Samples/test-run-grid-menu)
-- Test plan suites tree menu - [test-plans-suites-context](src/Samples/test-plans-suites-context)
-- Test plan hub pivot tab - [test-plan-pivot-tabs](src/Samples/test-plan-pivot-tabs)
+- Test run grid menu - [test-run-grid-menu](src/Extensions/test-run-grid-menu)
+- Test plan suites tree menu - [test-plans-suites-context](src/Extensions/test-plans-suites-context)
+- Test plan hub pivot tab - [test-plan-pivot-tabs](src/Extensions/test-plan-pivot-tabs)
 
 ## Dashboard widgets
 
 This sample adds a widget extension using the `IConfigurableWidget` interface to demonstrate how to customize your dashboards to show status, progress, or trends.  It includes an associated widget configuration using the `IWidgetConfiguration` interface so users can customize the experience.
 
-- Widget - [widget-catalog](src/Samples/widget-catalog)
-- Widget configuration - [widget-configuration](src/Samples/widget-configuration)
+- Widget - [widget-catalog](src/Extensions/widget-catalog)
+- Widget configuration - [widget-configuration](src/Extensions/widget-configuration)
 
 # Examples
 
-Examples are self contained samples that demonstrate how to use the Azure DevOps SDK to interact with the Azure DevOps REST APIs. They are located in the `./src/Examples` folder. The examples are not be included when building the extension.
+Examples are self contained Extensions that demonstrate how to use the Azure DevOps SDK to interact with the Azure DevOps REST APIs. They are located in the `./src/Examples` folder. The examples are not be included when building the extension.
 
 ## BreadcrumbService
 
