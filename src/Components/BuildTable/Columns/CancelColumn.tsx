@@ -3,7 +3,7 @@ import { ITableColumn, TableCell } from "azure-devops-ui/Table";
 import React from "react";
 import { IPipelineItem } from "../IPipelineItem";
 import { Button } from "azure-devops-ui/Button";
-import { cancelBuild, getProjects } from "../../../Samples/build-release-hub-group/build-release-hug-group-functions";
+import { cancelBuild, getProjects } from "../../../Extensions/build-release-hub-group/build-release-hug-group-functions";
 import { BuildStatus } from "azure-devops-extension-api/Build";
 import { Observable, ObservableValue } from 'azure-devops-ui/Core/Observable';
 
