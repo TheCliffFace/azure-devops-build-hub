@@ -8,7 +8,7 @@
             ],
             "properties": {
                 "name": "Build and Pipelines Hub",
-                "uri": "dist/build-release-hub-group/build-release-hub-group.html",
+                "uri": "dist/build-release-hub-group/build-release-hub-group.html",                
                 "icon": {
                     "light": "static/app_folder.png",
                     "dark": "static/app_folder.png"

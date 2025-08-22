@@ -20,6 +20,7 @@ import { PipelineTableType } from "../../Components/PipelineTable/PipelineTableT
 import { IHeaderCommandBarItem } from "azure-devops-ui/HeaderCommandBar";
 import { Card } from "azure-devops-ui/Card";
 import { Checkbox } from "azure-devops-ui/Checkbox";
+import { getPipelineRuns } from "./PipelinesApiClient";
 
 interface IBuildHubGroup {
     context?: IExtensionContext;
@@ -94,29 +95,13 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
             text: "Refresh",
             onActivate: () => { this.loadProjectContext() },
             iconProps: {
-            iconName: 'Refresh'
+                iconName: 'Refresh'
             },
             isPrimary: true,
             tooltipProps: {
-            text: "Open a panel with custom extension content"
-            }
-        },/*
-        {
-            id: "messageDialog",
-            text: "Message",
-            onActivate: () => {  },
-            tooltipProps: {
-            text: "Open a simple message dialog"
+                text: "Open a panel with custom extension content"
             }
         },
-        {
-            id: "customDialog",
-            text: "Custom Dialog",
-            onActivate: () => { },
-            tooltipProps: {
-            text: "Open a dialog with custom extension content"
-            }
-        }*/
     ];
     
     private updateAutoRefresh = (checked: boolean): void => {
@@ -224,6 +209,8 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
             this.setState({ 
                 settings: this.state.settings,
             });  
+
+            
 
             const project: IProjectInfoExtended = 
                 {

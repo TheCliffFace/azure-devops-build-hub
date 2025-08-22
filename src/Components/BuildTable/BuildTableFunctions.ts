@@ -33,9 +33,15 @@ export function getTimelineStatus(record: TimelineRecord): IStatusIndicatorData 
                     indicatorData.label = "Failed";
                     break;
                 case TaskResult.Canceled:
-                    indicatorData.statusProps = { ...Statuses.Warning, ariaLabel: "Warning" };
-                    indicatorData.label = "Warning";
+                    indicatorData.statusProps = { ...Statuses.Canceled, ariaLabel: "Cancelled" };
+                    indicatorData.label = "Cancelled";
                     break;
+                case TaskResult.Skipped:
+                    indicatorData.statusProps = { ...Statuses.Skipped, ariaLabel: "Skipped" };
+                    indicatorData.label = "Skipped";
+                case TaskResult.Abandoned:
+                    indicatorData.statusProps = { ...Statuses.Skipped, ariaLabel: "Abandoned" };
+                    indicatorData.label = "Abandoned";                                                                           
                 default:
                     indicatorData.statusProps = { ...Statuses.Warning, ariaLabel: "Warning" };
                     indicatorData.label = "Warning";
@@ -56,8 +62,8 @@ export function getBuildStatus(build: Build): IStatusIndicatorData {
     
     switch (status) {
         case BuildStatus.None:
-            indicatorData.statusProps = { ...Statuses.Failed, ariaLabel: "Failed" };
-            indicatorData.label = "Failed";
+            indicatorData.statusProps = { ...Statuses.Information, ariaLabel: "None" };
+            indicatorData.label = "None";
             break;
         case BuildStatus.InProgress:                        
             indicatorData.statusProps = { ...Statuses.Running, ariaLabel: "Running" };
@@ -66,7 +72,7 @@ export function getBuildStatus(build: Build): IStatusIndicatorData {
         case BuildStatus.Cancelling:
             indicatorData.statusProps = { ...Statuses.Canceled, ariaLabel: "Cancelling" };
             indicatorData.label = "Cancelling";
-            break;
+            break;        
         case BuildStatus.NotStarted:
             indicatorData.statusProps = { ...Statuses.Waiting, ariaLabel: "Not Started" };
             indicatorData.label = "Not Started";
@@ -86,7 +92,7 @@ export function getBuildStatus(build: Build): IStatusIndicatorData {
                     indicatorData.label = "Failed";
                     break;
                 case BuildResult.Canceled:
-                    indicatorData.statusProps = { ...Statuses.Warning, ariaLabel: "Warning" };
+                    indicatorData.statusProps = { ...Statuses.Canceled, ariaLabel: "Warning" };
                     indicatorData.label = "Warning";
                     break;
                 default:
@@ -97,19 +103,6 @@ export function getBuildStatus(build: Build): IStatusIndicatorData {
     }
 
     return indicatorData;
-}
-
-export function ReleaseTypeText(props: { releaseType: ReleaseType }) {    
-    switch (props.releaseType) {
-        case ReleaseType.prAutomated:
-            return "PR Automated";
-        case ReleaseType.manual:
-            return "Manually triggered";
-        case ReleaseType.scheduled:
-            return "Scheduled";                
-        default:
-            return "Release new-features";
-    }    
 }
 
 export function ReleaseTypeFromItem(props: IPipelineItem): ReleaseType {

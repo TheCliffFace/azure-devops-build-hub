@@ -140,7 +140,7 @@ export async function getBuildsInProgress(
     undefined,
     undefined,
     undefined,
-    BuildQueryOrder.StartTimeDescending,
+    BuildQueryOrder.QueueTimeDescending,
     undefined,
     undefined,
     undefined,
