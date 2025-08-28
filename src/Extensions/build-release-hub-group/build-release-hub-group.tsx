@@ -13,7 +13,6 @@ import BuildTable from "../../Components/BuildTable/BuildTable";
 import { IPipelineItem } from "../../Components/BuildTable/IPipelineItem";
 import { ObservableValue, ReadyableObservableArray } from "azure-devops-ui/Core/Observable";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
-import { IExtensionContext } from "azure-devops-extension-sdk";
 import PipelineTable from "../../Components/PipelineTable/PIpelineTable";
 import { PipelineTableType } from "../../Components/PipelineTable/PipelineTableType";
 import { IHeaderCommandBarItem } from "azure-devops-ui/HeaderCommandBar";
@@ -22,8 +21,8 @@ import { Checkbox } from "azure-devops-ui/Checkbox";
 import { defaultProject } from "./defaultProject";
 import { IProjectInfoExtended } from "./IProjectInfoExtended";
 
-interface IBuildHubGroup {
-    context?: IExtensionContext;
+interface IBuildHubGroup {    
+    title: string;
     settings: IBuildHubGroupSettings;
     project: IProjectInfoExtended;
     organisation: string;
@@ -54,7 +53,7 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
             },
             project: defaultProject,             
             organisation: '',
-            //projects: []
+            title: 'Pipelines Hub'            
         };  
     }
 
@@ -135,7 +134,7 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
         var result =  (
             <Page className="sample-hub flex-grow">
                 <Header 
-                    title={`${this.state.context?.extensionId} ${this.state.context?.version}`}
+                    title={`${this.state.title}`}
                     titleSize={TitleSize.Large}
                     commandBarItems={this.commandBarItems}                    
                         />                
@@ -198,10 +197,15 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
             this.state.settings.loading = true;
             const host = await SDK.getHost();            
             const context = await SDK.getExtensionContext();            
+            var title = this.state.title;
+            if(context.extensionId.endsWith('-dev')){
+                title += ' [dev]'
+            }
+            title += ' ' + context.version;
             this.setState({ 
                 settings: this.state.settings,
+                title: title,
                 organisation: host.name,
-                context: context,
             });                 
 
             await SDK.notifyLoadSucceeded();                                     
