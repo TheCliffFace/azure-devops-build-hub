@@ -8,13 +8,12 @@ import { Spinner, SpinnerOrientation, SpinnerSize } from "azure-devops-ui/Spinne
 import { showRootComponent } from "../../Common";
 import { IProjectInfo } from "azure-devops-extension-api";
 import { getBuildDefinitions, getBuildsInProgress, getCurrentProject, getPipelineItems, getProjects } from "./build-release-hug-group-functions";
-import { Build, BuildStatus } from "azure-devops-extension-api/Build";
+import { Build, BuildDefinitionReference, BuildStatus } from "azure-devops-extension-api/Build";
 import BuildTable from "../../Components/BuildTable/BuildTable";
 import { IPipelineItem } from "../../Components/BuildTable/IPipelineItem";
 import { ObservableValue, ReadyableObservableArray } from "azure-devops-ui/Core/Observable";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import PipelineTable from "../../Components/PipelineTable/PIpelineTable";
-import { PipelineTableType } from "../../Components/PipelineTable/PipelineTableType";
 import { IHeaderCommandBarItem } from "azure-devops-ui/HeaderCommandBar";
 import { Card } from "azure-devops-ui/Card";
 import { Checkbox } from "azure-devops-ui/Checkbox";
@@ -171,18 +170,20 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
                             projectName={this.state.project.name}
                             organisation={this.state.organisation}                        
                             branches={this.state.project.branches}
-                            itemProvider={this.state.project.pipelines}>                                
+                            itemProvider={this.state.project.pipelines}>                                                            
                                 </PipelineTable>
 
                         <BuildTable 
                             projectName={this.state.project.name}
                             itemProvider={this.state.project.pipelineItems}
+                            builds={this.state.project.pipelines?.value?.value}
                                 ></BuildTable>
 
                         <h2>Other projects:</h2>   
                         <BuildTable 
                             projectName="Other Projects"
                             itemProvider={this.state.project.otherPipelineItems}
+                            builds={this.state.project.otherPipelines?.value?.value ?? []}
                                 ></BuildTable>                                                                                             
                     </div>
                 </div>
@@ -234,14 +235,7 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
                 ...((await getCurrentProject()) ?? defaultProjectContext),                     
             };
             
-            const buildDefinitions = (await getBuildDefinitions(project.id, 100))
-                .map(m => {
-                    var result: PipelineTableType = {
-                        ...m
-                    }
-
-                    return result;
-                });
+            const buildDefinitions = await getBuildDefinitions(project.id, 100);
 
             const top = 10;
             let allProjectBuilds = await getBuildsInProgress(
@@ -261,7 +255,7 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
             console.log(`${project.branches.length}`)
             project.builds = allProjectBuilds.slice(0, top);                       
             if(!project.pipelines){
-                project.pipelines = new ObservableValue<ArrayItemProvider<PipelineTableType>>(new ArrayItemProvider([]));
+                project.pipelines = new ObservableValue<ArrayItemProvider<BuildDefinitionReference>>(new ArrayItemProvider([]));
             }
             project.pipelines.value = new ArrayItemProvider(buildDefinitions);
 
@@ -279,16 +273,23 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
 
             projects = projects.filter(p => p.id !== project.id);
         
-            var builds: Build[] = [];   
+            var otherBuilds: Build[] = [];   
+            var otherBuildDefinitions: BuildDefinitionReference[] = [];
             for(var item of projects){                
                 if(item.id) {
-                    item.builds = await getBuildsInProgress(item.id!, top);
-                    builds = [...builds, ...item.builds];
+                    var projectBuilds = await getBuildsInProgress(item.id!, top);
+                    var projectBuildDefinitions = await getBuildDefinitions(item.id!, top);
+                    otherBuildDefinitions = [...otherBuildDefinitions, ...projectBuildDefinitions];
+                    otherBuilds = [...otherBuilds, ...projectBuilds];
                 }                
             }           
             
-            const otherPipelineItems = await getPipelineItems(builds, true);
+            const otherPipelineItems = await getPipelineItems(otherBuilds, true);
             project.otherPipelineItems.value = new ArrayItemProvider(otherPipelineItems);
+            if(!project.otherPipelines) {
+                project.otherPipelines = new ObservableValue<ArrayItemProvider<BuildDefinitionReference>>(new ArrayItemProvider([]));
+            }
+            project.otherPipelines.value = new ArrayItemProvider(otherBuildDefinitions);
         
             this.setState({ 
                 project: project,                  

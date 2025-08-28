@@ -1,8 +1,8 @@
 import { ITableColumn, SimpleTableCell } from "azure-devops-ui/Table";
 import React from 'react';
-import { PipelineTableType } from "./PipelineTableType";
 import { Tooltip } from 'azure-devops-ui/TooltipEx';
 import { Link } from 'azure-devops-ui/Link';
+import { BuildDefinitionReference } from "azure-devops-extension-api/Build";
 
 export const columnName =
 {
@@ -17,8 +17,8 @@ export const columnName =
 function renderColumn(
     rowIndex: number,
     columnIndex: number,
-    tableColumn: ITableColumn<PipelineTableType>,
-    tableItem: PipelineTableType
+    tableColumn: ITableColumn<BuildDefinitionReference>,
+    tableItem: BuildDefinitionReference
 ): JSX.Element {
     return (
         <SimpleTableCell

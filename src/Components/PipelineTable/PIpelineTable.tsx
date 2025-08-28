@@ -12,15 +12,15 @@ import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Observer } from "azure-devops-ui/Observer";
 import { columnName } from "./ColumnName";
-import { PipelineTableType } from "./PipelineTableType";
 import { columnState } from "./ColumnState";
 import { columnBuilds } from "./ColumnBuilds";
+import { BuildDefinitionReference } from "azure-devops-extension-api/Build";
 
 export interface IPipelineTableProps {
     projectName: string;
     organisation: string;
-    branches: string[];
-    itemProvider?: ObservableValue<ArrayItemProvider<PipelineTableType>>;
+    branches: string[];    
+    itemProvider?: ObservableValue<ArrayItemProvider<BuildDefinitionReference>>;
 }
 
 export default class PipelineTable extends React.Component<IPipelineTableProps> {
@@ -34,8 +34,8 @@ export default class PipelineTable extends React.Component<IPipelineTableProps> 
             >
                 {this.props.itemProvider && (
                     <Observer itemProvider={this.props.itemProvider!}>
-                        {(observableProps: { itemProvider: ArrayItemProvider<PipelineTableType> }) => (
-                            <Table<Partial<PipelineTableType>>
+                        {(observableProps: { itemProvider: ArrayItemProvider<BuildDefinitionReference> }) => (
+                            <Table<Partial<BuildDefinitionReference>>
                                 ariaLabel="Advanced table"
                                 behaviors={[this.sortingBehavior]}
                                 className="table-example"
@@ -52,7 +52,7 @@ export default class PipelineTable extends React.Component<IPipelineTableProps> 
         );
     }
 
-    private columns(): ITableColumn<PipelineTableType>[]{
+    private columns(): ITableColumn<BuildDefinitionReference>[]{
         return [
             columnName,
             columnState,
@@ -60,13 +60,13 @@ export default class PipelineTable extends React.Component<IPipelineTableProps> 
         ];
     }
 
-    private columnsPartial(): ITableColumn<Partial<PipelineTableType>>[]{
+    private columnsPartial(): ITableColumn<Partial<BuildDefinitionReference>>[]{
         return this.columns().map((column) => {
-            return column as ITableColumn<Partial<PipelineTableType>>;
+            return column as ITableColumn<Partial<BuildDefinitionReference>>;
         });
     }
 
-    private sortingBehavior = new ColumnSorting<Partial<PipelineTableType>>(
+    private sortingBehavior = new ColumnSorting<Partial<BuildDefinitionReference>>(
         (columnIndex: number, proposedSortOrder: SortOrder) => {
             if(!this.props.itemProvider){
                 return;
@@ -86,7 +86,7 @@ export default class PipelineTable extends React.Component<IPipelineTableProps> 
 
     private sortFunctions = [
         // Sort on Name column
-        (item1: PipelineTableType, item2: PipelineTableType) => {
+        (item1: BuildDefinitionReference, item2: BuildDefinitionReference) => {
             return item1.name.localeCompare(item2.name!);
         },
     ];

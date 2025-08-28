@@ -1,15 +1,15 @@
 import { ITableColumn, SimpleTableCell } from "azure-devops-ui/Table";
 import React from 'react';
-import { PipelineTableType } from "./PipelineTableType";
 import { Button } from 'azure-devops-ui/Button';
 import { queueBuildForBranch } from '../../Extensions/build-release-hub-group/build-release-hug-group-functions';
+import { BuildDefinitionReference } from "azure-devops-extension-api/Build";
 
-export function columnBuilds(organisation: string, branches: string[]): ITableColumn<PipelineTableType> {
+export function columnBuilds(organisation: string, branches: string[]): ITableColumn<BuildDefinitionReference> {
     var renderColumn = function(
         rowIndex: number,
         columnIndex: number,
-        tableColumn: ITableColumn<PipelineTableType>,
-        tableItem: PipelineTableType
+        tableColumn: ITableColumn<BuildDefinitionReference>,
+        tableItem: BuildDefinitionReference
     ): JSX.Element {   
         
         return (

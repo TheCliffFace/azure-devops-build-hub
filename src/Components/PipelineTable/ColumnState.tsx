@@ -1,9 +1,7 @@
-import * as SDK from 'azure-devops-extension-sdk';
-import { ITableColumn, SimpleTableCell, TableCell } from "azure-devops-ui/Table";
+import { ITableColumn, SimpleTableCell } from "azure-devops-ui/Table";
 import React from 'react';
-import { PipelineTableType } from "./PipelineTableType";
 import { RadioButton, RadioButtonGroup, RadioButtonGroupDirection } from 'azure-devops-ui/RadioButton';
-import { DefinitionQueueStatus } from 'azure-devops-extension-api/Build';
+import { BuildDefinitionReference, DefinitionQueueStatus } from 'azure-devops-extension-api/Build';
 import { ObservableValue } from 'azure-devops-ui/Core/Observable';
 import { updateBuildDefinitionStatus } from '../../Extensions/build-release-hub-group/build-release-hug-group-functions';
 
@@ -21,8 +19,8 @@ export const columnState =
 function renderColumn(
     rowIndex: number,
     columnIndex: number,
-    tableColumn: ITableColumn<PipelineTableType>,
-    tableItem: PipelineTableType
+    tableColumn: ITableColumn<BuildDefinitionReference>,
+    tableItem: BuildDefinitionReference
 ): JSX.Element {
 
     const queueStatus$ = new ObservableValue<string>(tableItem.queueStatus.toString());

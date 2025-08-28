@@ -160,10 +160,10 @@ export async function getPipelineDefinition(pipelineId: number): Promise<BuildDe
 }
 
 export async function getPipelineItems(builds: Build[], getTimeline: boolean = false) {
-    const pipelineItems: IPipelineItem[] = await Promise.all(builds.map(async m => {
+    const pipelineItems: IPipelineItem[] = await Promise.all(builds.map(async build => {
         var stages: TimelineRecord[] = [];            
-        if(getTimeline && m && m.id) {
-            const timeline = await getBuildTimeline(m.project.id, m.id);
+        if(getTimeline && build && build.id) {
+            const timeline = await getBuildTimeline(build.project.id, build.id);
             stages = timeline
                 ?.records
                 ?.filter(f => f.type === "Stage") 
@@ -171,12 +171,12 @@ export async function getPipelineItems(builds: Build[], getTimeline: boolean = f
         }                
 
         return {
-            name: m.definition.name,
-            status: m.status, 
-            build: m,
+            name: build.definition.name,
+            status: build.status, 
+            build: build,
             lastRunData: {                        
-                startTime: m.startTime,
-                endTime: m.finishTime,                                              
+                startTime: build.startTime,
+                endTime: build.finishTime,                                              
             },
             favorite: new ObservableValue(true),
             stages: stages,
