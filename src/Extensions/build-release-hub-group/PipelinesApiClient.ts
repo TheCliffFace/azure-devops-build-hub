@@ -1,5 +1,5 @@
 import * as SDK from 'azure-devops-extension-sdk';
-import { Pipeline, Run } from "./PIpelines";
+import { Run } from "./PIpelines";
 
 export interface IListResponse<T> {
     count: number;

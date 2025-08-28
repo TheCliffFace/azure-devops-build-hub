@@ -41,8 +41,6 @@ export default class BuildTable extends React.Component<IBuildTableProps> {
                             containerClassName="h-scroll-auto"
                             itemProvider={observableProps.itemProvider}
                             showLines={true}
-                            onSelect={(event, data) => console.log("Selected Row - " + data.index)}
-                            onActivate={(event, row) => console.log("Activated Row - " + row.index)}
                         />
                     )}
                 </Observer>

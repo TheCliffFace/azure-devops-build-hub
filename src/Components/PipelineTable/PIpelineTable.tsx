@@ -14,7 +14,7 @@ import { Observer } from "azure-devops-ui/Observer";
 import { columnName } from "./ColumnName";
 import { PipelineTableType } from "./PipelineTableType";
 import { columnState } from "./ColumnState";
-import { columnBuildsFunc } from "./ColumnBuilds";
+import { columnBuilds } from "./ColumnBuilds";
 
 export interface IPipelineTableProps {
     projectName: string;
@@ -24,6 +24,7 @@ export interface IPipelineTableProps {
 
 export default class PipelineTable extends React.Component<IPipelineTableProps> {
     public render(): JSX.Element {
+
         return (
             <Card
                 className="flex-grow bolt-table-card"
@@ -36,7 +37,7 @@ export default class PipelineTable extends React.Component<IPipelineTableProps> 
                             ariaLabel="Advanced table"
                             behaviors={[this.sortingBehavior]}
                             className="table-example"
-                            columns={this.columnsPartial}
+                            columns={this.columnsPartial()}
                             containerClassName="h-scroll-auto"
                             itemProvider={observableProps.itemProvider}
                             showLines={true}                            
@@ -47,15 +48,19 @@ export default class PipelineTable extends React.Component<IPipelineTableProps> 
         );
     }
 
-    private columns: ITableColumn<PipelineTableType>[] = [
-        columnName,
-        columnState,
-        columnBuildsFunc(this.props.organisation),
-    ];
+    private columns(): ITableColumn<PipelineTableType>[]{
+        return [
+            columnName,
+            columnState,
+            columnBuilds(this.props.organisation),
+        ];
+    }
 
-    private columnsPartial: ITableColumn<Partial<PipelineTableType>>[] = this.columns.map((column) => {
-        return column as ITableColumn<Partial<PipelineTableType>>;
-    });
+    private columnsPartial(): ITableColumn<Partial<PipelineTableType>>[]{
+        return this.columns().map((column) => {
+            return column as ITableColumn<Partial<PipelineTableType>>;
+        });
+    }
 
     private sortingBehavior = new ColumnSorting<Partial<PipelineTableType>>(
         (columnIndex: number, proposedSortOrder: SortOrder) => {
@@ -64,7 +69,7 @@ export default class PipelineTable extends React.Component<IPipelineTableProps> 
                     columnIndex,
                     proposedSortOrder,
                     this.sortFunctions,
-                    this.columns,
+                    this.columns(),
                     this.props.itemProvider.value.value
                 )
             );

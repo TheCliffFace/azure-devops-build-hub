@@ -4,7 +4,7 @@ import { PipelineTableType } from "./PipelineTableType";
 import { Button } from 'azure-devops-ui/Button';
 import { queueBuildForBranch } from '../../Extensions/build-release-hub-group/build-release-hug-group-functions';
 
-export function columnBuildsFunc(organisation: string): ITableColumn<PipelineTableType> {
+export function columnBuilds(organisation: string): ITableColumn<PipelineTableType> {
     var renderColumn = function(
         rowIndex: number,
         columnIndex: number,
@@ -24,6 +24,7 @@ export function columnBuildsFunc(organisation: string): ITableColumn<PipelineTab
                         key={"branch-" + rowIndex + "-" + index}                    
                         onClick={async () => { await queueBuildForBranch(organisation, tableItem.project.id, tableItem, branch)}}
                         style={{ marginRight: "5px" }}
+                        disabled={organisation == ''}
                         >
                         Queue {branch.replace("refs/heads/", "")}       
                     </Button>
