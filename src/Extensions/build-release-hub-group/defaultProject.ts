@@ -7,8 +7,8 @@ import { IProjectInfoExtended } from "./IProjectInfoExtended";
 
 export const defaultProject: IProjectInfoExtended = {
     ...defaultProjectContext,
-    builds: [],
-    pipelines: new ObservableValue<ArrayItemProvider<PipelineTableType>>(new ArrayItemProvider([])),
+    builds: [],    
     pipelineItems: new ObservableValue<ArrayItemProvider<IPipelineItem>>(new ArrayItemProvider([])),
     otherPipelineItems: new ObservableValue<ArrayItemProvider<IPipelineItem>>(new ArrayItemProvider([])),
+    branches: [],
 };

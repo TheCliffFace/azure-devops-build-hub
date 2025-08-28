@@ -4,6 +4,7 @@ import { Tooltip } from "azure-devops-ui/TooltipEx";
 import React from "react";
 import { IPipelineItem } from "../IPipelineItem";
 import { getBuildStatus } from "../BuildTableFunctions";
+import { Link } from "azure-devops-ui/Link";
 
 export const nameColumn = {
     id: "name",
@@ -23,6 +24,7 @@ function renderNameColumn(
     tableColumn: ITableColumn<IPipelineItem>,
     tableItem: IPipelineItem
 ): JSX.Element {
+    var buildLink = tableItem.build.definition.url;
     return (
         <SimpleTableCell
             columnIndex={columnIndex}
@@ -37,7 +39,7 @@ function renderNameColumn(
             />
             <div className="flex-row wrap-text">
                 <Tooltip overflowOnly={true}>
-                    <span>{tableItem.name}</span>
+                    <Link href={buildLink}>{tableItem.name}</Link>                    
                 </Tooltip>
             </div>
         </SimpleTableCell>

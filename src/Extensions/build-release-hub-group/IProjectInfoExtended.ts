@@ -8,7 +8,8 @@ import { PipelineTableType } from "../../Components/PipelineTable/PipelineTableT
 
 export interface IProjectInfoExtended extends IProjectInfo {
     builds: Build[];
-    pipelines: ObservableValue<ArrayItemProvider<PipelineTableType>>;
+    pipelines?: ObservableValue<ArrayItemProvider<PipelineTableType>>;
     pipelineItems: ObservableValue<ArrayItemProvider<IPipelineItem>>;
     otherPipelineItems: ObservableValue<ArrayItemProvider<IPipelineItem>>;
+    branches: string[];
 }

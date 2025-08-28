@@ -1,5 +1,4 @@
-import * as SDK from 'azure-devops-extension-sdk';
-import { ITableColumn, SimpleTableCell, TableCell } from "azure-devops-ui/Table";
+import { ITableColumn, SimpleTableCell } from "azure-devops-ui/Table";
 import React from 'react';
 import { PipelineTableType } from "./PipelineTableType";
 import { Tooltip } from 'azure-devops-ui/TooltipEx';

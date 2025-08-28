@@ -19,7 +19,8 @@ import { columnBuilds } from "./ColumnBuilds";
 export interface IPipelineTableProps {
     projectName: string;
     organisation: string;
-    itemProvider: ObservableValue<ArrayItemProvider<PipelineTableType>>;
+    branches: string[];
+    itemProvider?: ObservableValue<ArrayItemProvider<PipelineTableType>>;
 }
 
 export default class PipelineTable extends React.Component<IPipelineTableProps> {
@@ -31,19 +32,22 @@ export default class PipelineTable extends React.Component<IPipelineTableProps> 
                 contentProps={{ contentPadding: false }}
                 titleProps={{ text: `Pipelines for ${this.props.projectName}` }}
             >
-                <Observer itemProvider={this.props.itemProvider}>
-                    {(observableProps: { itemProvider: ArrayItemProvider<PipelineTableType> }) => (
-                        <Table<Partial<PipelineTableType>>
-                            ariaLabel="Advanced table"
-                            behaviors={[this.sortingBehavior]}
-                            className="table-example"
-                            columns={this.columnsPartial()}
-                            containerClassName="h-scroll-auto"
-                            itemProvider={observableProps.itemProvider}
-                            showLines={true}                            
-                        />
-                    )}
-                </Observer>
+                {this.props.itemProvider && (
+                    <Observer itemProvider={this.props.itemProvider!}>
+                        {(observableProps: { itemProvider: ArrayItemProvider<PipelineTableType> }) => (
+                            <Table<Partial<PipelineTableType>>
+                                ariaLabel="Advanced table"
+                                behaviors={[this.sortingBehavior]}
+                                className="table-example"
+                                columns={this.columnsPartial()}
+                                containerClassName="h-scroll-auto"
+                                itemProvider={observableProps.itemProvider}
+                                showLines={true}                            
+                            />
+                        )}
+                    </Observer>    
+                )}
+                
             </Card>
         );
     }
@@ -52,7 +56,7 @@ export default class PipelineTable extends React.Component<IPipelineTableProps> 
         return [
             columnName,
             columnState,
-            columnBuilds(this.props.organisation),
+            columnBuilds(this.props.organisation, this.props.branches),
         ];
     }
 
@@ -64,6 +68,10 @@ export default class PipelineTable extends React.Component<IPipelineTableProps> 
 
     private sortingBehavior = new ColumnSorting<Partial<PipelineTableType>>(
         (columnIndex: number, proposedSortOrder: SortOrder) => {
+            if(!this.props.itemProvider){
+                return;
+            }
+
             this.props.itemProvider.value = new ArrayItemProvider(
                 sortItems(
                     columnIndex,

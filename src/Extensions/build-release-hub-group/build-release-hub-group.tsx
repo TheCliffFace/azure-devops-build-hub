@@ -102,7 +102,7 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
             {
                 id: "refresh",
                 text: "Refresh",            
-                onActivate: () => { this.loadAsync() },
+                onActivate: () => { this.loadProjectsAsync() },
                 iconProps: {
                     iconName: 'Refresh'
                 },
@@ -119,7 +119,7 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
     private updateAutoRefresh = (checked: boolean): void => {
         this.state.settings.autoRefresh.value = checked;
         if(checked){
-            this.loadAsync();            
+            this.loadProjectsAsync();            
             return;
         }
     
@@ -171,6 +171,7 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
                         <PipelineTable
                             projectName={this.state.project.name}
                             organisation={this.state.organisation}                        
+                            branches={this.state.project.branches}
                             itemProvider={this.state.project.pipelines}>                                
                                 </PipelineTable>
 
@@ -245,7 +246,7 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
                 BuildStatus.All
             );    
 
-            const branches = Array.from(
+            project.branches = Array.from(
                 new Set(
                     allProjectBuilds
                         .map(m => m.sourceBranch)
@@ -253,11 +254,11 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
                         .sort((a, b) => a.localeCompare(b))
             ));
 
-            for(const build of buildDefinitions) {
-                build.branches = branches;
-            }
-            
+            console.log(`${project.branches.length}`)
             project.builds = allProjectBuilds.slice(0, top);                       
+            if(!project.pipelines){
+                project.pipelines = new ObservableValue<ArrayItemProvider<PipelineTableType>>(new ArrayItemProvider([]));
+            }
             project.pipelines.value = new ArrayItemProvider(buildDefinitions);
 
             const pipelineItems: IPipelineItem[] = await getPipelineItems(project.builds, true);
