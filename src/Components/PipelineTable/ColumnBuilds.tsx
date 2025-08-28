@@ -4,39 +4,42 @@ import { PipelineTableType } from "./PipelineTableType";
 import { Button } from 'azure-devops-ui/Button';
 import { queueBuildForBranch } from '../../Extensions/build-release-hub-group/build-release-hug-group-functions';
 
-export const columnBuilds =
-{
-    id: "pipelineBuilds",
-    name: "Builds",
-    ariaLabel: "Builds",
-    readonly: true,
-    renderCell: renderColumn,
-    width: -50,
-};
+export function columnBuildsFunc(organisation: string): ITableColumn<PipelineTableType> {
+    var renderColumn = function(
+        rowIndex: number,
+        columnIndex: number,
+        tableColumn: ITableColumn<PipelineTableType>,
+        tableItem: PipelineTableType
+    ): JSX.Element {   
+        
+        return (
+            <SimpleTableCell
+                key={"col-builds-" + columnIndex + "-" + rowIndex}
+                columnIndex={columnIndex}
+                tableColumn={tableColumn}   
+                contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m"         
+                >
+                {tableItem.branches?.map((branch, index) => (
+                    <Button 
+                        key={"branch-" + rowIndex + "-" + index}                    
+                        onClick={async () => { await queueBuildForBranch(organisation, tableItem.project.id, tableItem, branch)}}
+                        style={{ marginRight: "5px" }}
+                        >
+                        Queue {branch.replace("refs/heads/", "")}       
+                    </Button>
+                ))}    
+            </SimpleTableCell>
+        );
+    }
 
-function renderColumn(
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<PipelineTableType>,
-    tableItem: PipelineTableType
-): JSX.Element {   
+    return {
+        id: "pipelineBuilds",
+        name: "Builds",
+        ariaLabel: "Builds",
+        readonly: true,
+        renderCell: renderColumn,
+        width: -50,
+    };
+
     
-    return (
-        <SimpleTableCell
-            key={"col-builds-" + columnIndex + "-" + rowIndex}
-            columnIndex={columnIndex}
-            tableColumn={tableColumn}   
-            contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m"         
-            >
-            {tableItem.branches?.map((branch, index) => (
-                <Button 
-                    key={"branch-" + rowIndex + "-" + index}                    
-                    onClick={async () => { await queueBuildForBranch(tableItem.project.id, tableItem, branch)}}
-                    style={{ marginRight: "5px" }}
-                    >
-                    Queue {branch.replace("refs/heads/", "")}       
-                </Button>
-            ))}    
-        </SimpleTableCell>
-    );
 }

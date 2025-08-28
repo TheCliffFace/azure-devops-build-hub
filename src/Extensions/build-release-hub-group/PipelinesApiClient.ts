@@ -8,16 +8,16 @@ export interface IListResponse<T> {
 
 
 // your collection url
-let orgUrl = "https://dev.azure.com/thecliffface";
+let orgUrl = "https://dev.azure.com";
 let apiVersion = "7.1";
 
-function getUrl(stub: string) : string {
-    const url = new URL(`${orgUrl}/${stub}`);
+function getUrl(organisation: string, stub: string) : string {
+    const url = new URL(`${orgUrl}/${organisation}/${stub}`);
     url.searchParams.append("api-version", apiVersion);
     return url.toString();
 }
 
-async function fetchApiResponse<T>(method: "GET" | "POST", stub: string, body: any | undefined = undefined): Promise<T>{
+async function fetchApiResponse<T>(method: "GET" | "POST", organisation: string, stub: string, body: any | undefined = undefined): Promise<T>{
     
     await SDK.ready();
     const accessToken = await SDK.getAccessToken();
@@ -28,7 +28,7 @@ async function fetchApiResponse<T>(method: "GET" | "POST", stub: string, body: a
 
     // Make the fetch call    
     const response = await fetch(
-        getUrl(stub), 
+        getUrl(organisation, stub), 
         {
             method: method,
             headers: {
@@ -52,10 +52,12 @@ async function fetchApiResponse<T>(method: "GET" | "POST", stub: string, body: a
 }
 
 export async function getPipelineRuns(
+    organisation: string,
     project: string, 
 ): Promise<IListResponse<Run>> {
     const response = await fetchApiResponse<IListResponse<Run>>(
         "GET",
+        organisation,
         `${project}/_apis/pipelines/runs`
     );
 
@@ -64,6 +66,7 @@ export async function getPipelineRuns(
 }
 
 export async function startPipeline(
+        organisation: string,
         project: string, 
         pipelineId: number,
         branch: string,
@@ -85,6 +88,7 @@ export async function startPipeline(
 
     const response = await fetchApiResponse<Run>(
         "POST",
+        organisation,
         `${project}/_apis/pipelines/${pipelineId}/runs`,
         run
     );    

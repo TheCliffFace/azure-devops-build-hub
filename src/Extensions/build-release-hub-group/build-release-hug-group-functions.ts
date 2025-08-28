@@ -9,12 +9,15 @@ import {
   BuildStatus, 
   DefinitionQueryOrder, 
   Timeline,
+  TimelineRecord,
 } from 'azure-devops-extension-api/Build';
 
 import { CoreRestClient, TeamProjectReference } from 'azure-devops-extension-api/Core';
 import { PagedList } from 'azure-devops-extension-api/WebApi';
 import { Run } from './PIpelines';
 import { startPipeline } from './PipelinesApiClient';
+import { ObservableValue } from 'azure-devops-ui/Core/Observable';
+import { IPipelineItem } from '../../Components/BuildTable/IPipelineItem';
 
 export async function getCurrentProject(): Promise<IProjectInfo | undefined> {
   const pps = await SDK.getService<IProjectPageService>(
@@ -55,11 +58,12 @@ export async function updateBuildDefinitionStatus(
 }
 
 export async function queueBuildForBranch(
+  organisation: string,
   projectId: string,
   buildDefinition: BuildDefinitionReference,
   branchName: string
 ): Promise<Run> {
-  var response = await startPipeline(projectId, buildDefinition.id, branchName)
+  var response = await startPipeline(organisation, projectId, buildDefinition.id, branchName)
 
   return response;
 }
@@ -153,4 +157,31 @@ export async function getBuildsInProgress(
 export async function getPipelineDefinition(pipelineId: number): Promise<BuildDefinition> {
   const projectId = (await getCurrentProject())?.id;
   return await getClient(BuildRestClient).getDefinition(projectId!, pipelineId);
+}
+
+export async function getPipelineItems(builds: Build[], getTimeline: boolean = false) {
+    const pipelineItems: IPipelineItem[] = await Promise.all(builds.map(async m => {
+        var stages: TimelineRecord[] = [];            
+        if(getTimeline && m && m.id) {
+            const timeline = await getBuildTimeline(m.project.id, m.id);
+            stages = timeline
+                ?.records
+                ?.filter(f => f.type === "Stage") 
+                ?? [];                
+        }                
+
+        return {
+            name: m.definition.name,
+            status: m.status, 
+            build: m,
+            lastRunData: {                        
+                startTime: m.startTime,
+                endTime: m.finishTime,                                              
+            },
+            favorite: new ObservableValue(true),
+            stages: stages,
+        } as IPipelineItem;
+    }));
+
+    return pipelineItems;
 }

@@ -14,10 +14,11 @@ import { Observer } from "azure-devops-ui/Observer";
 import { columnName } from "./ColumnName";
 import { PipelineTableType } from "./PipelineTableType";
 import { columnState } from "./ColumnState";
-import { columnBuilds } from "./ColumnBuilds";
+import { columnBuildsFunc } from "./ColumnBuilds";
 
 export interface IPipelineTableProps {
     projectName: string;
+    organisation: string;
     itemProvider: ObservableValue<ArrayItemProvider<PipelineTableType>>;
 }
 
@@ -38,9 +39,7 @@ export default class PipelineTable extends React.Component<IPipelineTableProps> 
                             columns={this.columnsPartial}
                             containerClassName="h-scroll-auto"
                             itemProvider={observableProps.itemProvider}
-                            showLines={true}
-                            onSelect={(event, data) => console.log("Selected Row - " + data.index)}
-                            onActivate={(event, row) => console.log("Activated Row - " + row.index)}                            
+                            showLines={true}                            
                         />
                     )}
                 </Observer>
@@ -48,11 +47,10 @@ export default class PipelineTable extends React.Component<IPipelineTableProps> 
         );
     }
 
-
     private columns: ITableColumn<PipelineTableType>[] = [
         columnName,
         columnState,
-        columnBuilds,
+        columnBuildsFunc(this.props.organisation),
     ];
 
     private columnsPartial: ITableColumn<Partial<PipelineTableType>>[] = this.columns.map((column) => {

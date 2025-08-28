@@ -2,17 +2,16 @@ import * as React from "react";
 import * as SDK from "azure-devops-extension-sdk";
 
 import "./build-release-hub-group.scss";
-
 import { Header, TitleSize } from "azure-devops-ui/Header";
 import { Page } from "azure-devops-ui/Page";
 import { Spinner, SpinnerOrientation, SpinnerSize } from "azure-devops-ui/Spinner";
 import { showRootComponent } from "../../Common";
 import { IProjectInfo } from "azure-devops-extension-api";
-import { getBuildDefinitions, getBuildTimeline, getBuildsInProgress, getCurrentProject, getProjects } from "./build-release-hug-group-functions";
+import { getBuildDefinitions, getBuildTimeline, getBuildsInProgress, getCurrentProject, getPipelineItems, getProjects } from "./build-release-hug-group-functions";
 import { Build, BuildStatus, TimelineRecord } from "azure-devops-extension-api/Build";
 import BuildTable from "../../Components/BuildTable/BuildTable";
 import { IPipelineItem } from "../../Components/BuildTable/IPipelineItem";
-import { ObservableValue } from "azure-devops-ui/Core/Observable";
+import { ObservableValue, ReadyableObservableArray } from "azure-devops-ui/Core/Observable";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { IExtensionContext } from "azure-devops-extension-sdk";
 import PipelineTable from "../../Components/PipelineTable/PIpelineTable";
@@ -20,13 +19,14 @@ import { PipelineTableType } from "../../Components/PipelineTable/PipelineTableT
 import { IHeaderCommandBarItem } from "azure-devops-ui/HeaderCommandBar";
 import { Card } from "azure-devops-ui/Card";
 import { Checkbox } from "azure-devops-ui/Checkbox";
-import { getPipelineRuns } from "./PipelinesApiClient";
+import { defaultProject } from "./defaultProject";
+import { IProjectInfoExtended } from "./IProjectInfoExtended";
 
 interface IBuildHubGroup {
     context?: IExtensionContext;
     settings: IBuildHubGroupSettings;
     project: IProjectInfoExtended;
-    /*projects: IProjectInfoExtended[];    */
+    organisation: string;
 }
 
 interface IBuildHubGroupSettings {
@@ -35,24 +35,9 @@ interface IBuildHubGroupSettings {
     loading: boolean,
 }
 
-interface IProjectInfoExtended extends IProjectInfo {
-    builds: Build[];
-    pipelines: ObservableValue<ArrayItemProvider<PipelineTableType>>;
-    pipelineItems: ObservableValue<ArrayItemProvider<IPipelineItem>>;
-    otherPipelineItems: ObservableValue<ArrayItemProvider<IPipelineItem>>;
-}
-
-const defaultProjectContext: IProjectInfo = {
+export const defaultProjectContext: IProjectInfo = {
     id: '',
     name: 'retrieving...',
-};
-
-const defaultProject: IProjectInfoExtended = {
-    ...defaultProjectContext,
-    builds: [],
-    pipelines: new ObservableValue<ArrayItemProvider<PipelineTableType>>(new ArrayItemProvider([])),
-    pipelineItems: new ObservableValue<ArrayItemProvider<IPipelineItem>>(new ArrayItemProvider([])),
-    otherPipelineItems: new ObservableValue<ArrayItemProvider<IPipelineItem>>(new ArrayItemProvider([])),
 };
 
 class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {   
@@ -68,46 +53,74 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
                 loading: false,
             },
             project: defaultProject,             
+            organisation: '',
             //projects: []
         };  
     }
 
-    public componentDidMount() {
+    public componentDidMount() {        
+        this.componentDidMountAsync().then(() => {})
+    }
+
+    private async componentDidMountAsync() {
+        this.updateCommandBarItems();
+        
         try {        
             console.log("Component did mount, initializing SDK...");
             
-            SDK.init();
+            await SDK.init();
+            console.log("SDK is ready, loading project context...");
             
-            SDK.ready().then(() => {
-                console.log("SDK is ready, loading project context...");
-                this.loadProjectContext();
-            }).catch((error) => {
-                console.error("SDK ready failed: ", error);
-            });
+            await SDK.ready();            
+            console.log("SDK is ready, loading project context...");
+                        
+            await this.loadProjectAsync();            
         } catch (error) {
             console.error("Error during SDK initialization or project context loading: ", error);
         }
     }
-    
-    private commandBarItems: IHeaderCommandBarItem[] = [        
-        {
-            id: "refresh",
-            text: "Refresh",
-            onActivate: () => { this.loadProjectContext() },
-            iconProps: {
-                iconName: 'Refresh'
-            },
-            isPrimary: true,
-            tooltipProps: {
-                text: "Open a panel with custom extension content"
-            }
-        },
-    ];
+
+    private updateCommandBarItems() : void {
+        /*
+        LEAVING THIS IN COMMENTED OUT: 
+        
+        Whatever I do, I can't prevent a react error with the command bar items, 
+        the classic 'Cannot update during an existing state transition' error.
+        
+        console.log('updateCommandBarItems start')
+
+        this.commandBarItems.subscribe(s => {
+            console.log(`commandBarItems updated ${JSON.stringify(s)}`);
+        });
+        */
+
+        try {
+            this.commandBarItems.push(
+                {
+                    id: "refresh",
+                    text: "Refresh",            
+                    onActivate: () => { this.loadProjectAsync() },
+                    iconProps: {
+                        iconName: 'Refresh'
+                    },
+                    isPrimary: true,
+                    tooltipProps: {
+                        text: "Open a panel with custom extension content"
+                    }
+                }
+            );
+        }
+        catch(error){
+            // do nothing
+        }
+        
+        //console.log('updateCommandBarItems end')    
+    }
     
     private updateAutoRefresh = (checked: boolean): void => {
         this.state.settings.autoRefresh.value = checked;
         if(checked){
-            this.loadProjectContext();            
+            this.loadProjectAsync();            
             return;
         }
     
@@ -117,15 +130,16 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
         }
     }
 
-    public render(): JSX.Element {
-        return (
+    private commandBarItems = new ReadyableObservableArray<IHeaderCommandBarItem>();
+    
+    public render(): JSX.Element {        
+        var result =  (
             <Page className="sample-hub flex-grow">
                 <Header 
-                    title={`Build Hub ${this.state.context?.version}`}
+                    title={`${this.state.context?.extensionId} ${this.state.context?.version}`}
                     titleSize={TitleSize.Large}
-                    commandBarItems={this.commandBarItems}
-                    >
-                </Header>                
+                    commandBarItems={this.commandBarItems}                    
+                        />                
                 <div className="page-content">                    
                     <div className="webcontext-section">
                         
@@ -156,7 +170,8 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
                         
                         
                         <PipelineTable
-                            projectName={this.state.project.name}                        
+                            projectName={this.state.project.name}
+                            organisation={this.state.organisation}                        
                             itemProvider={this.state.project.pipelines}>                                
                                 </PipelineTable>
 
@@ -173,44 +188,20 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
                     </div>
                 </div>
             </Page>
-        );
+        );        
+        return result;
     }   
 
-    private async getPipelineItems(builds: Build[], getTimeline: boolean = false) {
-        const pipelineItems: IPipelineItem[] = await Promise.all(builds.map(async m => {
-            var stages: TimelineRecord[] = [];            
-            if(getTimeline && m && m.id) {
-                const timeline = await getBuildTimeline(m.project.id, m.id);
-                stages = timeline
-                    ?.records
-                    ?.filter(f => f.type === "Stage") 
-                    ?? [];                
-            }                
-
-            return {
-                name: m.definition.name,
-                status: m.status, 
-                build: m,
-                lastRunData: {                        
-                    startTime: m.startTime,
-                    endTime: m.finishTime,                                              
-                },
-                favorite: new ObservableValue(true),
-                stages: stages,
-            } as IPipelineItem;
-        }));
-
-        return pipelineItems;
-    }
-
-    private async loadProjectContext(): Promise<void> {
-        try {         
+    private async loadProjectAsync(): Promise<void> {
+        try {   
+                  
             this.state.settings.loading = true;
+            const host = await SDK.getHost();
+            
             this.setState({ 
                 settings: this.state.settings,
+                organisation: host.name,
             });  
-
-            
 
             const project: IProjectInfoExtended = 
                 {
@@ -219,7 +210,7 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
                 };
             
             const context = await SDK.getExtensionContext();            
-
+           
             const buildDefinitions = (await getBuildDefinitions(project.id, 100))
                 .map(m => {
                     var result: PipelineTableType = {
@@ -251,7 +242,7 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
             project.builds = allProjectBuilds.slice(0, top);                       
             project.pipelines.value = new ArrayItemProvider(buildDefinitions);
 
-            const pipelineItems: IPipelineItem[] = await this.getPipelineItems(project.builds, true);
+            const pipelineItems: IPipelineItem[] = await getPipelineItems(project.builds, true);
 
             project.pipelineItems.value = new ArrayItemProvider(pipelineItems);
     
@@ -273,7 +264,7 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
                 }                
             }           
             
-            const otherPipelineItems = await this.getPipelineItems(builds, true);
+            const otherPipelineItems = await getPipelineItems(builds, true);
             project.otherPipelineItems.value = new ArrayItemProvider(otherPipelineItems);
        
             this.setState({ 
@@ -284,17 +275,17 @@ class BuildHubGroup extends React.Component<{}, IBuildHubGroup> {
                
             if(this.state.settings.autoRefresh.value) {
                 var timeout: any = setTimeout(() => {
-                    this.loadProjectContext();
+                    this.loadProjectAsync();
                 }, this.state.settings.autoRefreshInterval.value);
 
                 this.timeout = timeout;
             }
 
-            SDK.notifyLoadSucceeded();                                     
+            await SDK.notifyLoadSucceeded();                                     
         } catch (error) {
             console.error("Failed to load project context: ", error);
                      
-            SDK.notifyLoadFailed("Failed to load project context: " + error);            
+            await SDK.notifyLoadFailed("Failed to load project context: " + error);            
         }
         finally{
             this.state.settings.loading = false;            
