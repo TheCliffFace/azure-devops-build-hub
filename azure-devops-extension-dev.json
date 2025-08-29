@@ -1,5 +1,6 @@
 {    
     "id": "build-hub-dev",
-    "name": "Build and Pipelines Hub Dev",
-    "baseUri": "http://localhost:3000"
+    "name": "Build and Pipelines Hub Dev",    
+    "baseUri": "https://build-hub.thecliffface.com",
+    "public": false
 }
