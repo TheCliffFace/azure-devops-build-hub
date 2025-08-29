@@ -2,16 +2,13 @@
     "manifestVersion": 1,
     "id": "build-hub",
     "publisher": "TheCliffFace",
-    "version": "1.0.46",
-    "name": "Build and Pipelines Hub",
-    "description": "Azure DevOps Extension",
+    "version": "1.0.48",
+    "name": "Pipelines Hub",
+    "description": "Extension to bring together a bunch of commonly needed tasks for Azure Devops on one screen.",
     "categories": [
-        "Azure Repos",
-        "Azure Boards",
-        "Azure Pipelines",
-        "Azure Test Plans",
-        "Azure Artifacts"
+        "Azure Pipelines"        
     ],
+    "public": true,
     "targets": [
         {
             "id": "Microsoft.VisualStudio.Services"
@@ -22,8 +19,12 @@
     },
     "content": {
         "details": {
-            "path": "overview.md"
+            "path": "README.md"
         }
+    },
+    "repository": {
+        "type": "git",
+        "uri": "https://github.com/TheCliffFace/azure-devops-build-hub"
     },
     "files": [
         {
@@ -33,9 +34,18 @@
         {
             "path": "dist",
             "addressable": true
+        },
+        {
+            "path": "screenshots",
+            "addressable": true
         }
     ],
     "scopes": [
         "vso.build"
+    ],
+    "tags": [
+        "build",
+        "deployment",
+        "pipelines"
     ]
 }
