@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "build-hub",
     "publisher": "TheCliffFace",
-    "version": "1.0.48",
+    "version": "1.0.50",
     "name": "Pipelines Hub",
     "description": "Extension to bring together a bunch of commonly needed tasks for Azure Devops on one screen.",
     "categories": [
