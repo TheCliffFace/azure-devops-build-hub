@@ -19,7 +19,7 @@
     "build": "npm run compile && npm run postbuild",
     "build:dev": "npm run compile:dev && npm run postbuild:dev",
     "postbuild": "npm run package-extension -- --rev-version",    
-    "postbuild:dev": "npm run package-extension:dev -- --rev-version",    
+    "postbuild:dev": "npm run package-extension:dev",    
     "package-extension": "tfx extension create --manifest-globs azure-devops-extension.json src/Extensions/**/*.json",
     "package-extension:dev": "tfx extension create --manifest-globs azure-devops-extension.json src/Extensions/**/*.json --overrides-file azure-devops-extension-dev.json",
     "publish-extension": "npm run build && tfx extension publish --manifest-globs azure-devops-extension.json src/Extensions/**/*.json  --token %AZURE_DEVOPS_PASSWORD%",

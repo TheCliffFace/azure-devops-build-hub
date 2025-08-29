@@ -137,7 +137,7 @@ function get-buildstatus {
 
 
     
-$organisation = "thecliffface"
+$organisation = $env:AZURE_DEVOPS_ORGANISATION
 $user = $env:AZURE_DEVOPS_USER
 $pass = $env:AZURE_DEVOPS_PASSWORD
 
