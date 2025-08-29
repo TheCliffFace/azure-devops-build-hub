@@ -15,15 +15,11 @@ function get-azuredevops {
         Authorization = $basicAuthValue
     }
 
-    $apiVersion = "api-version=7.1"
-    #$apiVersion = "api-version=6.0"    
+    $apiVersion = "api-version=7.1"    
     
-    #write-host "Path: $path"
     if($path -like '*\?*'){
-        #write-host "1"
         $path = "$path&$apiVersion"
     } else {
-        #write-host "2"
         $path = "$path\?$apiVersion"
     }
 
@@ -135,21 +131,13 @@ function get-buildstatus {
     return get-azuredevops "$projectId/_apis/build/status/$definitionId" $true
 }
 
+clear-host
 
-    
 $organisation = $env:AZURE_DEVOPS_ORGANISATION
 $user = $env:AZURE_DEVOPS_USER
 $pass = $env:AZURE_DEVOPS_PASSWORD
 
-#VERB https://dev.azure.com/{organization}/_apis/{area}/{resource}?api-version={version}
-
-clear-host
 $projects = get-projects
-
-#$buildTimeLine = get-buildTimeline "38630c9f-8b05-48e0-974c-fab193a5d24e" 2349
-#$buildLogs = get-buildLogs "38630c9f-8b05-48e0-974c-fab193a5d24e" 2349
-#$buildTimeLine | select-object { $_.name, $_.state }
-#exit
 
 $inProgressRuns = @()
 $buildStages = @()
@@ -160,7 +148,6 @@ foreach($project in $projects.value){
     
     foreach($pipeline in $pipelines.value){
         
-        #$builds = get-builds $pipeline.id
         $pipelineRuns = get-pipelineruns $project.id $pipeline.id
         $inProgress = $pipelineRuns.value | where-object { $_.state -eq "inProgress" }
         $inProgressRuns += $inProgress
@@ -168,12 +155,6 @@ foreach($project in $projects.value){
         foreach($run in $inProgress){            
             $build = get-build $project.id $run.id
             $buildTimeLine = get-buildTimeline $project.id $run.id    
-            #$buildStatus = get-buildStatus $project.id $run.id                            
-            # build reports not enabled
-            #$buildReport = get-buildreport $project.id $run.id  
-
-            # build properties not all that useful
-            #$buildProperties = get-buildProperties $project.id $run.id
 
             $projectExpression = @{label="project";expression={$project.name}}
             $pipelineExpression = @{label="pipeline";expression={$pipeline.name}}
@@ -198,8 +179,7 @@ foreach($project in $projects.value){
                     type, `
                     refName, `
                     identifier 
-                        
-        #    $logs = get-logs $project.id $pipeline.id $inProgress[0].id            
+                                
         }
     }    
 }
